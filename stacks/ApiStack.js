@@ -8,6 +8,7 @@ export const ApiStack = ({ stack, app }) => {
   const api = new Api(stack, "Api", {
     // customDomain: app.stage === 'prod' ? 'api.scratch-tlafry.net' : undefined,
     defaults: {
+      memorySize: 128,
       authorizer: "iam",
       function: {
         permissions: [table],
