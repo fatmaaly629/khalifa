@@ -1,11 +1,12 @@
 import { Api, use } from "@serverless-stack/resources";
 import { StorageStack } from "./StorageStack";
 
-export function ApiStack({ stack, app }) {
+export const ApiStack = ({ stack, app }) => {
   const { table } = use(StorageStack);
 
   // Create the API
   const api = new Api(stack, "Api", {
+    // customDomain: app.stage === 'prod' ? 'api.scratch-tlafry.net' : undefined,
     defaults: {
       authorizer: "iam",
       function: {
@@ -17,9 +18,9 @@ export function ApiStack({ stack, app }) {
       },
     },
     routes: {
+      "GET /notes": "functions/list.main",
       "POST /notes": "functions/create.main",
       "GET /notes/{id}": "functions/get.main",
-      "GET /notes": "functions/list.main",
       "PUT /notes/{id}": "functions/update.main",
       "DELETE /notes/{id}": "functions/delete.main",
       "POST /billing": "functions/billing.main",
@@ -28,11 +29,11 @@ export function ApiStack({ stack, app }) {
 
   // Show the API endpoint in the output
   stack.addOutputs({
-    ApiEndpoint: api.url,
+    ApiEndpoint: api.customDomainUrl || api.url,
   });
 
   // Return the API resource
   return {
     api,
   };
-}
+};

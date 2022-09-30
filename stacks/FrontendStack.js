@@ -3,13 +3,20 @@ import { ApiStack } from "./ApiStack";
 import { AuthStack } from "./AuthStack";
 import { StorageStack } from "./StorageStack";
 
-export function FrontendStack({ stack, app }) {
+export const FrontendStack = ({ stack, app }) => {
   const { api } = use(ApiStack);
   const { auth } = use(AuthStack);
   const { bucket } = use(StorageStack);
 
   // Define our React app
   const site = new ReactStaticSite(stack, "ReactSite", {
+    // customDomain:
+    //   app.stage === 'prod'
+    //     ? {
+    //         domainName: 'scratch-tlafry.net',
+    //         domainAlias: 'www.scratch-tlafry.net',
+    //       }
+    //     : undefined,
     path: "frontend",
     // Pass in our environment variables
     environment: {
@@ -24,6 +31,6 @@ export function FrontendStack({ stack, app }) {
 
   // Show the url in the output
   stack.addOutputs({
-    SiteUrl: site.url,
+    SiteUrl: site.customDomainUrl || site.url,
   });
-}
+};
